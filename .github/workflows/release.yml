@@ -39,13 +39,12 @@ jobs:
 
             ### Homebrew
             ```bash
-            brew tap mmccune/tap
-            brew install sountop
+            brew install Coalesce-Software-Inc/sountop/sountop
             ```
 
             ### Manual
             ```bash
-            curl -LO https://github.com/mmccune/sountop/releases/download/${{ github.ref_name }}/sountop-${GITHUB_REF#refs/tags/v}.tar.gz
+            curl -LO https://github.com/Coalesce-Software-Inc/sountop/releases/download/${{ github.ref_name }}/sountop-${GITHUB_REF#refs/tags/v}.tar.gz
             tar -xzf sountop-*.tar.gz
             sudo make install
             ```
