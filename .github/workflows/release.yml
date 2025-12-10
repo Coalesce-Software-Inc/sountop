@@ -15,38 +15,38 @@ jobs:
         run: make
 
       - name: Test
-        run: ./soundmon --help
+        run: ./sountop --help
 
       - name: Create Release Archive
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          tar -czvf soundmon-${VERSION}.tar.gz soundmon soundmon.swift README.md LICENSE Makefile
+          tar -czvf sountop-${VERSION}.tar.gz sountop sountop.swift README.md LICENSE Makefile
 
       - name: Calculate SHA256
         id: sha
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
-          SHA=$(shasum -a 256 soundmon-${VERSION}.tar.gz | cut -d' ' -f1)
+          SHA=$(shasum -a 256 sountop-${VERSION}.tar.gz | cut -d' ' -f1)
           echo "sha256=${SHA}" >> $GITHUB_OUTPUT
           echo "SHA256: ${SHA}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: soundmon-*.tar.gz
+          files: sountop-*.tar.gz
           body: |
             ## Installation
 
             ### Homebrew
             ```bash
             brew tap mmccune/tap
-            brew install soundmon
+            brew install sountop
             ```
 
             ### Manual
             ```bash
-            curl -LO https://github.com/mmccune/soundmon/releases/download/${{ github.ref_name }}/soundmon-${GITHUB_REF#refs/tags/v}.tar.gz
-            tar -xzf soundmon-*.tar.gz
+            curl -LO https://github.com/mmccune/sountop/releases/download/${{ github.ref_name }}/sountop-${GITHUB_REF#refs/tags/v}.tar.gz
+            tar -xzf sountop-*.tar.gz
             sudo make install
             ```
 

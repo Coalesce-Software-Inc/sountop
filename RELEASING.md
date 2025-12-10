@@ -1,10 +1,10 @@
-# Releasing soundmon
+# Releasing sountop
 
-This document describes how to release a new version of soundmon and publish it to Homebrew.
+This document describes how to release a new version of sountop and publish it to Homebrew.
 
 ## Prerequisites
 
-1. A GitHub repository at `github.com/mmccune/soundmon`
+1. A GitHub repository at `github.com/mmccune/sountop`
 2. A Homebrew tap repository at `github.com/mmccune/homebrew-tap`
 
 ## Creating a Homebrew Tap
@@ -17,11 +17,11 @@ mkdir -p ~/devel/homebrew-tap/Formula
 cd ~/devel/homebrew-tap
 
 # Copy the formula
-cp /path/to/soundmon/Formula/soundmon.rb Formula/
+cp /path/to/sountop/Formula/sountop.rb Formula/
 
 git init
 git add .
-git commit -m "Add soundmon formula"
+git commit -m "Add sountop formula"
 git remote add origin git@github.com:mmccune/homebrew-tap.git
 git push -u origin main
 ```
@@ -61,15 +61,15 @@ After the release is created:
 
 ```bash
 # Get the SHA256 of the release tarball
-curl -sL https://github.com/mmccune/soundmon/archive/refs/tags/v1.0.0.tar.gz | shasum -a 256
+curl -sL https://github.com/mmccune/sountop/archive/refs/tags/v1.0.0.tar.gz | shasum -a 256
 ```
 
-Update `Formula/soundmon.rb` in your `homebrew-tap` repo:
+Update `Formula/sountop.rb` in your `homebrew-tap` repo:
 
 ```ruby
-class Soundmon < Formula
+class Sountop < Formula
   # ...
-  url "https://github.com/mmccune/soundmon/archive/refs/tags/v1.0.0.tar.gz"
+  url "https://github.com/mmccune/sountop/archive/refs/tags/v1.0.0.tar.gz"
   sha256 "YOUR_ACTUAL_SHA256_HERE"
   # ...
 end
@@ -79,8 +79,8 @@ Commit and push the formula update:
 
 ```bash
 cd ~/devel/homebrew-tap
-git add Formula/soundmon.rb
-git commit -m "Update soundmon to v1.0.0"
+git add Formula/sountop.rb
+git commit -m "Update sountop to v1.0.0"
 git push
 ```
 
@@ -88,9 +88,9 @@ git push
 
 ```bash
 brew update
-brew install mmccune/tap/soundmon
+brew install mmccune/tap/sountop
 # or if already installed:
-brew upgrade soundmon
+brew upgrade sountop
 ```
 
 ## Version Bumping Checklist
@@ -114,8 +114,8 @@ git tag -a v${VERSION} -m "Release v${VERSION}"
 git push origin v${VERSION}
 
 # After GitHub release is created, get SHA256:
-curl -sL https://github.com/mmccune/soundmon/archive/refs/tags/v${VERSION}.tar.gz | shasum -a 256
+curl -sL https://github.com/mmccune/sountop/archive/refs/tags/v${VERSION}.tar.gz | shasum -a 256
 
 # Update formula, then test:
-brew update && brew reinstall mmccune/tap/soundmon
+brew update && brew reinstall mmccune/tap/sountop
 ```

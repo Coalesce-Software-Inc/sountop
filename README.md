@@ -1,8 +1,8 @@
-# soundmon
+# sountop
 
 A command-line audio process monitor for macOS, similar to `htop` but for audio output.
 
-![soundmon screenshot](https://via.placeholder.com/800x400?text=soundmon+TUI+screenshot)
+![sountop screenshot](sountop-shot.png)
 
 ## Features
 
@@ -24,15 +24,15 @@ A command-line audio process monitor for macOS, similar to `htop` but for audio 
 
 ```bash
 brew tap mmccune/tap
-brew install soundmon
+brew install sountop
 ```
 
 ### From source
 
 ```bash
 # Clone the repository
-git clone https://github.com/mmccune/soundmon.git
-cd soundmon
+git clone https://github.com/mmccune/sountop.git
+cd sountop
 
 # Build and install
 make
@@ -42,20 +42,20 @@ sudo make install
 ### Manual compilation
 
 ```bash
-swiftc -O -o soundmon soundmon.swift
-sudo cp soundmon /usr/local/bin/
+swiftc -O -o sountop sountop.swift
+sudo cp sountop /usr/local/bin/
 ```
 
 ### Run directly with Swift (no compilation)
 
 ```bash
-swift soundmon.swift
+swift sountop.swift
 ```
 
 ## Usage
 
 ```
-soundmon [OPTIONS]
+sountop [OPTIONS]
 
 OPTIONS:
     -i, --interval <seconds>   Polling interval in seconds (default: 1.0)
@@ -70,22 +70,22 @@ OPTIONS:
 
 ```bash
 # Monitor with default 1-second refresh
-soundmon
+sountop
 
 # Faster refresh (500ms)
-soundmon -i 0.5
+sountop -i 0.5
 
 # Show all audio clients, not just active ones
-soundmon -a
+sountop -a
 
 # Single snapshot
-soundmon -1
+sountop -1
 
 # Log mode for scripting (appends to file)
-soundmon -l -i 5 >> ~/audio.log
+sountop -l -i 5 >> ~/audio.log
 
 # Pipe-friendly output (no colors)
-soundmon -1 -n | grep "OUTPUT"
+sountop -1 -n | grep "OUTPUT"
 ```
 
 ## Output
@@ -93,7 +93,7 @@ soundmon -1 -n | grep "OUTPUT"
 ### TUI Mode (default)
 
 ```
- soundmon - Audio Process Monitor                              [14:32:15]
+ sountop - Audio Process Monitor                               [14:32:15]
  Clients: 45 | Active: 2 | Output: 2 | Input: 0
 ────────────────────────────────────────────────────────────────────────
 PID     PROCESS                       AUDIO   INPUT   OUTPUT
@@ -113,7 +113,7 @@ PID     PROCESS                       AUDIO   INPUT   OUTPUT
 
 ## How It Works
 
-soundmon uses the macOS Core Audio Hardware Abstraction Layer (HAL) APIs:
+sountop uses the macOS Core Audio Hardware Abstraction Layer (HAL) APIs:
 
 - `kAudioHardwarePropertyProcessObjectList` - enumerate all audio client processes
 - `kAudioProcessPropertyPID` - get process ID
