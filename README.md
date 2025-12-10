@@ -23,15 +23,14 @@ A command-line audio process monitor for macOS, similar to `htop` but for audio 
 ### Homebrew (recommended)
 
 ```bash
-brew tap mmccune/tap
-brew install sountop
+brew install Coalesce-Software-Inc/sountop/sountop
 ```
 
 ### From source
 
 ```bash
 # Clone the repository
-git clone https://github.com/mmccune/sountop.git
+git clone https://github.com/Coalesce-Software-Inc/sountop.git
 cd sountop
 
 # Build and install
