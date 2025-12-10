@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make
+
+      - name: Test
+        run: ./soundmon --help
+
+      - name: Create Release Archive
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          tar -czvf soundmon-${VERSION}.tar.gz soundmon soundmon.swift README.md LICENSE Makefile
+
+      - name: Calculate SHA256
+        id: sha
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          SHA=$(shasum -a 256 soundmon-${VERSION}.tar.gz | cut -d' ' -f1)
+          echo "sha256=${SHA}" >> $GITHUB_OUTPUT
+          echo "SHA256: ${SHA}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: soundmon-*.tar.gz
+          body: |
+            ## Installation
+
+            ### Homebrew
+            ```bash
+            brew tap mmccune/tap
+            brew install soundmon
+            ```
+
+            ### Manual
+            ```bash
+            curl -LO https://github.com/mmccune/soundmon/releases/download/${{ github.ref_name }}/soundmon-${GITHUB_REF#refs/tags/v}.tar.gz
+            tar -xzf soundmon-*.tar.gz
+            sudo make install
+            ```
+
+            ### SHA256
+            `${{ steps.sha.outputs.sha256 }}`
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-homebrew:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Homebrew tap update
+        run: |
+          echo "After release, update your homebrew-tap repo with the new SHA256"
+          echo "Or set up a separate workflow in your tap repo to auto-update"

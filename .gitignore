@@ -1,0 +1,22 @@
+# Build artifacts
+soundmon
+*.o
+*.dSYM/
+
+# Distribution
+dist/
+
+# macOS
+.DS_Store
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+build/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
