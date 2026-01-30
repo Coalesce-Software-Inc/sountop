@@ -104,7 +104,7 @@ func getAudioProcesses() -> [AudioProcess] {
     }
 
     return processIDs.compactMap { objectID -> AudioProcess? in
-        // Get PID
+        // Get PID first to check process name early
         guard let pid: pid_t = getAudioObjectProperty(
             objectID: objectID,
             selector: AudioObjectPropertySelector(kAudioProcessPropertyPID)
@@ -112,14 +112,13 @@ func getAudioProcesses() -> [AudioProcess] {
             return nil
         }
 
+        let processName = getProcessName(pid: pid)
+
         // Get Bundle ID
         let bundleID = getCFStringProperty(
             objectID: objectID,
             selector: AudioObjectPropertySelector(kAudioProcessPropertyBundleID)
         )
-
-        // Get process name from system
-        let processName = getProcessName(pid: pid)
 
         // Check if running audio
         let isRunning: UInt32 = getAudioObjectProperty(
@@ -183,6 +182,24 @@ struct Color {
     static let bgWhite = "\u{1B}[47m"
 }
 
+// MARK: - Spinners
+
+struct Spinner {
+    // Braille-based bar levels for spectrum analyzer
+    // Uses left column of braille dots: dots 1,2,3,7 from top to bottom
+    // ⠀ = empty, ⡀ = 1 dot, ⡄ = 2 dots, ⡆ = 3 dots, ⡇ = 4 dots (full)
+    static let bars = ["⠀", "⡀", "⡄", "⡆", "⡇"]
+
+    // Generate semi-random equalizer pattern (3 bands)
+    static func randomEqualizer() -> String {
+        return (0..<3).map { _ in bars.randomElement()! }.joined()
+    }
+
+    // Sleeping z's for idle/inactive states (matched to 3-char width)
+    static let idle = ["⠀⠀⠀", "⡀⠀⠀", "⠀⡀⠀", "⠀⠀⡀", "⡀⡀⠀", "⠀⡀⡀", "⡀⠀⡀", "⡀⡀⡀"]
+}
+
+var spinnerFrame = 0
 var useColors = true
 
 func colored(_ text: String, _ codes: String...) -> String {
@@ -297,25 +314,31 @@ func displayProcesses(processes: [AudioProcess], showAll: Bool, logMode: Bool) {
                 // Audio status
                 let audioStatus: String
                 if process.isRunning {
-                    audioStatus = colored(padRight("yes", 8), Color.green)
+                    let frame = Spinner.randomEqualizer()
+                    audioStatus = colored(padRight(frame, 8), Color.green)
                 } else {
-                    audioStatus = colored(padRight("-", 8), Color.dim)
+                    let frame = Spinner.idle[(spinnerFrame / 100) % Spinner.idle.count]
+                    audioStatus = colored(padRight(frame, 8), Color.dim)
                 }
 
                 // Input status
                 let inputStatus: String
                 if process.isRunningInput {
-                    inputStatus = colored(padRight("YES", 8), Color.bold, Color.magenta)
+                    let frame = Spinner.randomEqualizer()
+                    inputStatus = colored(padRight(frame, 8), Color.bold, Color.magenta)
                 } else {
-                    inputStatus = colored(padRight("-", 8), Color.dim)
+                    let frame = Spinner.idle[(spinnerFrame / 100) % Spinner.idle.count]
+                    inputStatus = colored(padRight(frame, 8), Color.dim)
                 }
 
                 // Output status - most important, bright green
                 let outputStatus: String
                 if process.isRunningOutput {
-                    outputStatus = colored(padRight("YES", 8), Color.bold, Color.brightGreen)
+                    let frame = Spinner.randomEqualizer()
+                    outputStatus = colored(padRight(frame, 8), Color.bold, Color.brightGreen)
                 } else {
-                    outputStatus = colored(padRight("-", 8), Color.dim)
+                    let frame = Spinner.idle[(spinnerFrame / 100) % Spinner.idle.count]
+                    outputStatus = colored(padRight(frame, 8), Color.dim)
                 }
 
                 print("\(pidStr)\(nameStr)\(audioStatus)\(inputStatus)\(outputStatus)")
@@ -340,7 +363,7 @@ func printUsage() {
         sountop [OPTIONS]
 
     OPTIONS:
-        -i, --interval <seconds>   Polling interval in seconds (default: 1.0)
+        -i, --interval <seconds>   Polling interval in seconds (default: 0.05)
         -a, --all                  Show all audio clients, not just active ones
         -l, --log                  Log mode: simple timestamped output (no TUI)
         -1, --once                 Run once and exit (no continuous monitoring)
@@ -348,8 +371,8 @@ func printUsage() {
         -h, --help                 Show this help message
 
     EXAMPLES:
-        sountop                    # Monitor with 1 second interval
-        sountop -i 0.5             # Monitor every 500ms
+        sountop                    # Monitor at 20fps (smooth animation)
+        sountop -i 1               # Monitor every 1 second
         sountop -l -i 2            # Log mode, every 2 seconds
         sountop -1                 # Single snapshot
         sountop -a -n              # Show all, no colors
@@ -357,7 +380,7 @@ func printUsage() {
 }
 
 // Parse arguments
-var interval: Double = 1.0
+var interval: Double = 0.05  // 20fps for smooth animation
 var showAll = false
 var logMode = false
 var runOnce = false
@@ -418,6 +441,7 @@ if runOnce {
     while true {
         let processes = getAudioProcesses()
         displayProcesses(processes: processes, showAll: showAll, logMode: logMode)
+        spinnerFrame += 1
         Thread.sleep(forTimeInterval: interval)
     }
 }
