@@ -2,7 +2,7 @@
 
 A command-line audio process monitor for macOS, similar to `htop` but for audio output.
 
-![sountop screenshot](sountop-shot.png)
+![sountop demo](screen-rec.gif)
 
 ## Features
 
@@ -92,16 +92,19 @@ sountop -1 -n | grep "OUTPUT"
 ### TUI Mode (default)
 
 ```
- sountop - Audio Process Monitor                               [14:32:15]
- Clients: 45 | Active: 2 | Output: 2 | Input: 0
-────────────────────────────────────────────────────────────────────────
+ sountop - Audio Process Monitor                               [15:52:49]
+ Clients: 56 | Active: 3 | Output: 3 | Input: 0
+
 PID     PROCESS                       AUDIO   INPUT   OUTPUT
 ────────────────────────────────────────────────────────────────────────
-75115   Pandora                       yes     -       YES
-88924   zoom.us                       yes     YES     YES
+68735   Google Chrome Helper          :::       .     :::
+81446   Pandora                       :::       .     :::
+85440   firefox                       :::       .     :::
 ────────────────────────────────────────────────────────────────────────
  Press Ctrl+C to exit
 ```
+
+The AUDIO and OUTPUT columns show animated dancing dots (`:::`) when audio is active, making it easy to spot which processes are currently producing sound.
 
 ### Log Mode (`-l`)
 
@@ -131,7 +134,7 @@ This provides accurate, real-time detection of which processes are actually prod
 | PIDs | Cyan |
 | Active processes | Bold |
 | Inactive processes | Dim |
-| Audio output active | Bright Green |
+| Audio active (dancing dots) | Yellow |
 | Audio input active | Magenta |
 | Stats | Cyan/Green/Yellow/Magenta |
 
